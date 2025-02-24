@@ -1,0 +1,37 @@
+{
+  "name": "backend-book-my-doc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "nodemon --verbose --config nodemon.json src/index.mjs"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.10.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdulvahabaa/Backend-book-my-doc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abdulvahabaa/Backend-book-my-doc/issues"
+  },
+  "homepage": "https://github.com/abdulvahabaa/Backend-book-my-doc#readme",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
