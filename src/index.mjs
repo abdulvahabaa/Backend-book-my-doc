@@ -7,7 +7,11 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import multer from "multer";
 
-// import routes from "./routes";
+
+import userRoutes from "./routes/userRoutes.mjs";
+// import doctorRoutes from "./routes/doctorRoutes.mjs";
+// import adminRoutes from "./routes/adminRoutes.mjs";
+
 
 dotenv.config();
 
@@ -23,7 +27,9 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limited: "30mb", extended: true }));
 
 
-
+app.use("/api/users", userRoutes);
+// app.use("/api/doctors", doctorRoutes);
+// app.use("/api/admins", adminRoutes);
 
 app.listen(PORT, () => {
     console.log(
