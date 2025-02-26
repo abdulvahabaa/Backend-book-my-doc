@@ -9,7 +9,8 @@ import multer from "multer";
 
 
 import userRoutes from "./routes/userRoutes.mjs";
-// import doctorRoutes from "./routes/doctorRoutes.mjs";
+import doctorRoutes from "./routes/doctorRoutes.mjs";
+import connectToDatabase from "./config/db.mjs";
 // import adminRoutes from "./routes/adminRoutes.mjs";
 
 
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({ limited: "30mb", extended: true }));
 
 
 app.use("/api/users", userRoutes);
-// app.use("/api/doctors", doctorRoutes);
+app.use("/api/doctors", doctorRoutes);
 // app.use("/api/admins", adminRoutes);
 
 app.listen(PORT, () => {
