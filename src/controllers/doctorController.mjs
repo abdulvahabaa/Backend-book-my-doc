@@ -5,7 +5,7 @@ import Doctor from "../schemas/doctor.mjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const registerDoctor = async (req, res) => {
+export const signupDoctor = async (req, res) => {
   console.log("req.body", req.body);
   try {
     const { name, email, password } = req.body;
@@ -90,4 +90,3 @@ export const getDoctors = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
- 

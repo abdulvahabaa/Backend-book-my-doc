@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
-import morgan from "morgan";
+// import morgan from "morgan";
 import dotenv from "dotenv";
 import multer from "multer";
 
@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(morgan("combined"));
+// app.use(morgan("combined"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limited: "30mb", extended: true }));
 
