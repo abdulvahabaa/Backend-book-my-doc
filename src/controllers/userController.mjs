@@ -7,9 +7,17 @@ import User from "../schemas/User.mjs";
 
 export const signupUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, age, gender, phoneNumber, place } = req.body;
 
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !age ||
+      !gender ||
+      !phoneNumber ||
+      !place
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -25,9 +33,13 @@ export const signupUser = async (req, res) => {
 
     const newUser = {
       userId: uuidv7(),
-      name,
+      fullName: name,
       email,
       password: hashedPassword,
+      age,
+      gender,
+      phoneNumber,
+      place,
     };
 
     await newUser.save();
@@ -42,4 +54,33 @@ export const signupUser = async (req, res) => {
   }
 };
 
-export const loginUser = (req, res) => {};
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
