@@ -1,4 +1,3 @@
-import connectToDatabase from "../config/db.mjs";
 import bcrypt from "bcrypt";
 import { v7 as uuidv7 } from "uuid";
 import jwt from "jsonwebtoken";
@@ -11,8 +10,6 @@ export const signupUser = async (req, res) => {
     if (!name || !email) {
       return res.status(400).json({ message: "Name and email are required" });
     }
-
-    await connectToDatabase();
 
     const existingUser = await User.findOne({ email });
 
@@ -39,7 +36,7 @@ export const signupUser = async (req, res) => {
       fullName: name,
       email,
       password: hashedPassword,
-      googleId: googleId || null,
+      googleId: googleId ? googleId : undefined,
       authType,
       role: "user",
     });
@@ -59,6 +56,7 @@ export const signupUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password, googleId } = req.body;
+    console.log("req.body", req.body);
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
@@ -82,17 +80,23 @@ export const loginUser = async (req, res) => {
       if (!password) {
         return res.status(400).json({ message: "Password is required" });
       }
-      const isPasswordValid = bcrypt.compare(password, user.password);
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
       if (!isPasswordValid) {
         return res.status(400).json({ message: "Invalid email or password" });
       }
     }
 
+    // Generate JWT token
     const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ token });
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({ token, user: userData });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal server error" });
