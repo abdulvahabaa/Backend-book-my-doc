@@ -16,30 +16,27 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-
     },
     password: {
       type: String,
-      required: true,
-    },
+    }, // Password is optional for Google users
     age: {
       type: Number,
-      required: true,
+      default: 0,
       min: 0,
       max: 120,
     },
     gender: {
       type: String,
       enum: ["Male", "Female", "Other"],
-      required: true,
     },
     contactNumber: {
       type: String,
-      required: true,
+      default: "",
     },
     place: {
       type: String,
-      required: true,
+      default: "",
     },
     profilePicturePath: {
       type: String,
@@ -48,6 +45,22 @@ const userSchema = new mongoose.Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    authType: {
+      type: String,
+      enum: ["email", "google"], // Differentiates between login methods
+      required: true,
+      default: "email",
+    },
+    googleId: {
+      type: String, // Store Google ID for OAuth users
+      unique: true,
+      sparse: true, // Avoid duplicate key errors for non-Google users
     },
   },
   { timestamps: true }

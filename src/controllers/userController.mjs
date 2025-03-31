@@ -1,4 +1,3 @@
-import colletion from "../config/collection.mjs";
 import connectToDatabase from "../config/db.mjs";
 import bcrypt from "bcrypt";
 import { v7 as uuidv7 } from "uuid";
@@ -7,40 +6,43 @@ import User from "../schemas/User.mjs";
 
 export const signupUser = async (req, res) => {
   try {
-    const { name, email, password, age, gender, phoneNumber, place } = req.body;
+    const { name, email, password, googleId } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !age ||
-      !gender ||
-      !phoneNumber ||
-      !place
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required" });
     }
 
     await connectToDatabase();
 
-    const existingUser = await colletion.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    let hashedPassword = null;
+    let authType = "email";
 
-    const newUser = {
+    if (googleId) {
+      // Google Signup
+      authType = "google";
+    } else {
+      // Email/Password Signup
+      if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+      }
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const newUser = new User({
       userId: uuidv7(),
       fullName: name,
       email,
       password: hashedPassword,
-      age,
-      gender,
-      phoneNumber,
-      place,
-    };
+      googleId: googleId || null,
+      authType,
+      role: "user",
+    });
 
     await newUser.save();
 
@@ -56,10 +58,10 @@ export const signupUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, googleId } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
 
     const user = await User.findOne({ email });
@@ -68,10 +70,22 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid email or password" });
+    if (googleId) {
+      // Google Login
+      if (user.authType !== "google") {
+        return res
+          .status(400)
+          .json({ message: "This email is not linked to Google." });
+      }
+    } else {
+      // Email/Password Login
+      if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+      }
+      const isPasswordValid = bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid email or password" });
+      }
     }
 
     const token = jwt.sign({ userId: user.userId }, process.env.JWT_SECRET, {

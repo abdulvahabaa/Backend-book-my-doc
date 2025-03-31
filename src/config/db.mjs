@@ -5,7 +5,7 @@ dotenv.config();
 
 const MONGODB_URI = process.env.MONGO_DB_URI;
 
- const connectToDatabase = async () => {
+const connectToDatabase = async () => {
   if (mongoose.connection.readyState === 1) {
     console.log("\nProcess ID:", process.pid, "- Using Cached Connection\n");
     return mongoose.connection;
@@ -21,9 +21,7 @@ const MONGODB_URI = process.env.MONGO_DB_URI;
     );
 
     await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      maxPoolSize: 6,
+      maxPoolSize: 10,
     });
 
     console.log("Connection to MongoDB established successfully");

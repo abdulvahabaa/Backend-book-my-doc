@@ -22,8 +22,12 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    time: {
+    appointmentDate: {
       type: Date,
+      required: true,
+    },
+    appointmentTime: {
+      type: String,
       required: true,
     },
     tokenNumber: {
@@ -38,6 +42,7 @@ const bookingSchema = new mongoose.Schema(
         enum: ["Male", "Female", "Other"],
         required: true,
       },
+      contactNumber: { type: String, required: true },
       relation: {
         type: String,
         enum: [

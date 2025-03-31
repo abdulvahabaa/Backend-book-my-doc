@@ -3,14 +3,37 @@ import { v7 as uuidv7 } from "uuid";
 
 export const createBooking = async (req, res) => {
   try {
-    const { userId, doctorId, date, time } = req.body;
+    const {
+      userId,
+      doctorId,
+      department,
+      date,
+      time,
+      tokenNumber,
+      fullName,
+      age,
+      gender,
+      phoneNumber,
+      relation,
+    } = req.body;
 
     const newBooking = new Booking({
       bookingId: uuidv7(),
-      userId,
-      doctorId,
-      date,
-      time,
+      user: userId,
+      doctor: doctorId,
+      department,
+      appointmentDate: date,
+      appointmentTime: time,
+      tokenNumber,
+      bookingFor: {
+        fullName,
+        age,
+        gender,
+        phoneNumber,
+        relation,
+      },
+      isCompleted: false,
+      status: "pending",
     });
 
     await newBooking.save();
@@ -27,7 +50,7 @@ export const createBooking = async (req, res) => {
 export const getBookingsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const bookings = await Booking.find({ userId });
+    const bookings = await Booking.find({ user: userId });
 
     res.status(200).json(bookings);
   } catch (error) {
@@ -39,7 +62,12 @@ export const getBookingsByUser = async (req, res) => {
 export const getBookingsByDoctor = async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const bookings = await Booking.find({ doctorId });
+    const { date } = req.query;
+
+    const bookings = await Booking.find(
+      { doctor: doctorId },
+      { appointmentDate: date }
+    );
 
     res.status(200).json(bookings);
   } catch (error) {
