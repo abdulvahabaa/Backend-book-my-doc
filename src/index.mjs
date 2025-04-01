@@ -29,8 +29,15 @@ app.use("/api/doctors", doctorRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admins", adminRoutes);
 
+app.use((err, req, res, next) => {
+  console.error("Global Error:", err.stack);  
+  res.status(500).json({ message: "Something went wrong!" }); 
+});
+
 app.listen(PORT, () => {
   console.log(
     `Process ID ${process.pid}: Server running on PORT ${PORT} in Dev Mode`
   );
 });
+
+

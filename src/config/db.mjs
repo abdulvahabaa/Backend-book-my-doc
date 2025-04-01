@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -7,8 +7,7 @@ const MONGODB_URI = process.env.MONGO_DB_URI;
 
 const connectToDatabase = async () => {
   if (!MONGODB_URI) {
-    console.error("❌ MongoDB URI is not defined in .env file!");
-    process.exit(1);
+    throw new Error("❌ MongoDB URI is not defined in .env file!");
   }
 
   if (mongoose.connection.readyState === 1) {
@@ -27,7 +26,7 @@ const connectToDatabase = async () => {
     return mongoose.connection;
   } catch (error) {
     console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1);
+    throw error; 
   }
 };
 

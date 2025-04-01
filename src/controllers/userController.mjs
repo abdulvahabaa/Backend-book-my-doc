@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../schemas/User.mjs";
 
 export const signupUser = async (req, res) => {
+  console.log("req.body", req.body);
   try {
     const { name, email, password, googleId } = req.body;
 
@@ -93,8 +94,12 @@ export const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
 
-    const userData = user.toObject();
-    delete userData.password;
+    const userData = {
+      userId: user.userId,
+      name: user.fullName,
+      email: user.email,
+      role: user.role,
+    };
 
     res.status(200).json({ token, user: userData });
   } catch (error) {
